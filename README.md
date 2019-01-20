@@ -13,7 +13,12 @@ Create a new project using the CLI...
 create-react-app [myProject]
 ```
 
-**OR**, using "npx" command provided through NPM like this...
+**OR...** 
+
+By using "npx" command provided through NPM. **This way we don't have to run the above 2 commands seprately**.
 ```
 npx create-react-app [myProject]
 ```
+
+## Rendering UI With React
+Demonstrates steps to rendering an user interface with React
