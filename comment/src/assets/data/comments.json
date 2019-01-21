@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "post": "incididunt esse fugiat",
+    "author": 1
+  },
+  {
+    "id": 2,
+    "post": "do anim aliqua ad ad do ex et cillum enim",
+    "author": 3
+  },
+  {
+    "id": 3,
+    "post": "fugiat in quis reprehenderit non cupidatat ea amet minim culpa ea in nulla dolor enim proident incididunt ullamco commodo tempor dolore magna occaecat labore eiusmod",
+    "author": 3
+  },
+  {
+    "id": 4,
+    "post": "nulla sit quis minim enim ad exercitation proident cillum amet duis anim sint eiusmod id cupidatat nisi do laborum excepteur Lorem laboris laborum dolore ipsum magna irure duis sunt ipsum ex exercitation laborum duis commodo eiusmod occaecat do excepteur excepteur ipsum aliqua est nisi deserunt sint in do amet eu",
+    "author": 2
+  }
+]
