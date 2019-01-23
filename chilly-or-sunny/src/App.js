@@ -30,6 +30,7 @@ class App extends Component {
   }
 
   getCurrentLocation() {
+    // when we successuly get geolocation
     const onSuccess = (position) => {
       const { longitude, latitude } = position && position.coords && position.coords;
       if (longitude && latitude) {
@@ -44,6 +45,7 @@ class App extends Component {
         console.log(this.state.currentLocation);
       }
     }
+    // when we fail to get geolocation 
     const onError = (error) => {
       this.setState({
         ...this.state,
@@ -51,7 +53,7 @@ class App extends Component {
         isLoading: false,
       });
     }
-
+    // when geolocation is not available
     if (!navigator.geolocation){
       this.setState({
         ...this.state,
@@ -72,7 +74,7 @@ class App extends Component {
   }
 
   render() {
-    // lofic for determining icon and description based on current location and month
+    // logic for determining icon and description based on current location and month
     const { isLoading, currentLocation, currentMonth, message } = this.state;
     const isInNH = currentLocation && currentLocation.latitude >= 0;
     const isChilly = (
