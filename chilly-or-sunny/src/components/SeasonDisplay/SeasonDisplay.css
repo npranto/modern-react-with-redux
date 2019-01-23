@@ -1,0 +1,44 @@
+.SeasonDisplay {
+  width: 100vw;
+  height: 100vh;
+  padding: 1em;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+}
+.condition-icon {
+  width: 15%;
+  min-width: 100px;
+  height: 15vw;
+}
+.condition-icon img {
+  width: 100%;
+  height: auto;
+}
+.block {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
+.condition-description {
+  justify-content: center;
+  font-size: 2em;
+  font-weight: bolder;
+  color: gray;
+}
+.left {
+  justify-content: flex-start;
+}
+.right {
+  justify-content: flex-end;
+}
+
+@media screen and (max-width: 500px) {
+  .App {
+    flex-direction: column;
+  }
+  .block {
+    margin:  0 auto;
+    text-align: center;
+  }
+}
