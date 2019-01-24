@@ -7,20 +7,45 @@ class GifParty extends Component {
 
   state = {
     search: '',
-    gifs: [],
+    trendingGifs: [],
+    searchedGifs: [],
   }
 
   componentDidMount() {
-    // this.fetchTrendingGifs()
+    this.fetchTrendingGifs()
+    this.searchGifs('nba');
   }
 
   async fetchTrendingGifs() {
     const response = await axios.get(`http://api.giphy.com/v1/gifs/trending?api_key=5vecOzdQ37uQfJKbsHyTgSyq2cQbERLb`);
-    const trendingGifs = response.data.data;
-
+    const data = response && response.data && response.data.data;
+    const trendingGifs = data && data.map(gif => {
+      return {
+        src: gif && gif.images && gif.images.original && gif.images.original.url,
+        title: gif && gif.title
+      }
+    })
+    console.log({ trendingGifs });
     if (trendingGifs && trendingGifs.length) {
       this.setState({
-        gifs: trendingGifs
+        trendingGifs
+      })
+    }
+  }
+
+  async searchGifs(query) {
+    const response = await axios.get(`http://api.giphy.com/v1/gifs/search?api_key=5vecOzdQ37uQfJKbsHyTgSyq2cQbERLb&q=${query}`);
+    const data = response && response.data && response.data.data;
+    const searchedGifs = data && data.map(gif => {
+      return {
+        src: gif && gif.images && gif.images.original && gif.images.original.url,
+        title: gif && gif.title
+      }
+    })
+    console.log({ searchedGifs });
+    if (searchedGifs && searchedGifs.length) {
+      this.setState({
+        searchedGifs
       })
     }
   }
@@ -36,7 +61,9 @@ class GifParty extends Component {
   handleSearchSubmit(e) {
     e.preventDefault();
     const searchQuery = this.state.search;
-    console.log(searchQuery);
+    if (searchQuery) {
+      this.searchGifs(searchQuery)
+    }
   }
 
   render() {
@@ -47,7 +74,7 @@ class GifParty extends Component {
           handleSearchSubmit={(e) => this.handleSearchSubmit(e)}
           handleSearchInputChange={(e) => this.handleSearchInputChange(e)}
         />
-        <Gallery gifs={this.state.gifs} />
+        <Gallery gifs={!this.state.search ? this.state.trendingGifs : this.state.searchedGifs} />
       </div>
     )
   }
@@ -79,15 +106,10 @@ const Search = ({
 
 const Gallery = ({ gifs }) => {
   return (
-    <div className="gif-gallery">
+    <div className="ui three column grid gif-gallery">
       {
-        (gifs || []).map(gif => <Gif src={gif.src} />)
+        (gifs || []).map(gif => <Gif src={gif.src} alt={gif.title} />)
       }
-      <div className="column">
-        <div className="ui segment">
-          <img className="gif" alt="Gif" src="https://mtv.tumblr.com/post/120122363875/me-rn" />
-        </div>
-      </div>
     </div>
   )
 }
