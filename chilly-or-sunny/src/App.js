@@ -30,7 +30,7 @@ class App extends Component {
   }
 
   getCurrentLocation() {
-    // when we successuly get geolocation
+    // when we successfully get geolocation
     const onSuccess = (position) => {
       const { longitude, latitude } = position && position.coords && position.coords;
       if (longitude && latitude) {
@@ -45,7 +45,7 @@ class App extends Component {
         console.log(this.state.currentLocation);
       }
     }
-    // when we fail to get geolocation 
+    // when we fail to get geolocation
     const onError = (error) => {
       this.setState({
         ...this.state,
@@ -86,11 +86,11 @@ class App extends Component {
         {isLoading && <img className="loading-bar" src={Loading} alt="Loading Icon" />}
         {currentLocation && (currentMonth !== null)
           ? (
-            <SeasonDisplay 
-              icon={isChilly ? SnowIcon : SunnyIcon} 
+            <SeasonDisplay
+              icon={isChilly ? SnowIcon : SunnyIcon}
               description={isChilly ? 'Burr, it\'s chilly!' : 'Let\'s hit the beach!'}
             />
-          ) 
+          )
           : message && <div>{message}</div>
         }
       </div>

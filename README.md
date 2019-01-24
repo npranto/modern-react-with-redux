@@ -20,5 +20,11 @@ By using "npx" command provided through NPM. **This way we don't have to run the
 npx create-react-app [myProject]
 ```
 
-## Rendering UI With React
+## rendering-ui-with-react
 Demonstrates steps to rendering an user interface with React
+
+## comment
+Create a simple UI for a comment block 
+
+## chilly-or-sunny
+A simple and silly app to determine whether based on current location and weather
