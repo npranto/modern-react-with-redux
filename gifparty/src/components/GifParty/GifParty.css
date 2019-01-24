@@ -1,0 +1,20 @@
+.gif-party {
+  width: 100vw;
+  height: 100vh;
+  padding: 1em;
+  box-sizing: border-box;
+  background: lightgreen;
+}
+.search-wrapper {
+  text-align: center;
+}
+.clear {
+  margin-left: 1em;
+}
+.gif-gallery {
+  padding: 1.5em;
+}
+.gif {
+  max-width: 100%;
+  max-height: 300px;
+}
