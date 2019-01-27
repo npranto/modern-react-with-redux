@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
+import api from './../../api';
 import './GifParty.css';
 
 class GifParty extends Component {
@@ -13,41 +13,41 @@ class GifParty extends Component {
 
   componentDidMount() {
     this.fetchTrendingGifs()
-    this.searchGifs('nba');
   }
 
   async fetchTrendingGifs() {
-    const response = await axios.get(`http://api.giphy.com/v1/gifs/trending?api_key=5vecOzdQ37uQfJKbsHyTgSyq2cQbERLb`);
-    const data = response && response.data && response.data.data;
-    const trendingGifs = data && data.map(gif => {
-      return {
-        src: gif && gif.images && gif.images.original && gif.images.original.url,
-        title: gif && gif.title
-      }
-    })
-    console.log({ trendingGifs });
-    if (trendingGifs && trendingGifs.length) {
-      this.setState({
-        trendingGifs
+    const response = await api.fetchTrendingGifs();
+    if (response) {
+      const trendingGifs = response.map(gif => {
+        return {
+          src: gif && gif.images && gif.images.original && gif.images.original.url,
+          title: gif && gif.title
+        }
       })
+      if (trendingGifs && trendingGifs.length) {
+        this.setState({
+          trendingGifs
+        })
+      }
     }
   }
 
   async searchGifs(query) {
-    const response = await axios.get(`http://api.giphy.com/v1/gifs/search?api_key=5vecOzdQ37uQfJKbsHyTgSyq2cQbERLb&q=${query}`);
-    const data = response && response.data && response.data.data;
-    const searchedGifs = data && data.map(gif => {
-      return {
-        src: gif && gif.images && gif.images.original && gif.images.original.url,
-        title: gif && gif.title
-      }
-    })
-    console.log({ searchedGifs });
-    if (searchedGifs && searchedGifs.length) {
-      this.setState({
-        searchedGifs
+    const response = await api.searchGifs(query);
+    if (response) {
+      const searchedGifs = response.map(gif => {
+        return {
+          src: gif && gif.images && gif.images.original && gif.images.original.url,
+          title: gif && gif.title
+        }
       })
+      if (searchedGifs && searchedGifs.length) {
+        this.setState({
+          searchedGifs
+        })
+      }
     }
+    
   }
 
   handleSearchInputChange(e) {
@@ -55,7 +55,6 @@ class GifParty extends Component {
     this.setState({
       search: e.target.value,
     });
-    console.log(this.state.search);
   }
 
   handleSearchSubmit(e) {
@@ -74,7 +73,9 @@ class GifParty extends Component {
           handleSearchSubmit={(e) => this.handleSearchSubmit(e)}
           handleSearchInputChange={(e) => this.handleSearchInputChange(e)}
         />
-        <Gallery gifs={!this.state.search ? this.state.trendingGifs : this.state.searchedGifs} />
+        <Gallery 
+          gifs={!this.state.search ? this.state.trendingGifs : this.state.searchedGifs} 
+        />
       </div>
     )
   }
