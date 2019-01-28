@@ -47,7 +47,7 @@ class GifParty extends Component {
         })
       }
     }
-    
+
   }
 
   handleSearchInputChange(e) {
@@ -73,8 +73,8 @@ class GifParty extends Component {
           handleSearchSubmit={(e) => this.handleSearchSubmit(e)}
           handleSearchInputChange={(e) => this.handleSearchInputChange(e)}
         />
-        <Gallery 
-          gifs={!this.state.search ? this.state.trendingGifs : this.state.searchedGifs} 
+        <Gallery
+          gifs={!this.state.search ? this.state.trendingGifs : this.state.searchedGifs}
         />
       </div>
     )
@@ -107,22 +107,50 @@ const Search = ({
 
 const Gallery = ({ gifs }) => {
   return (
-    <div className="ui three column grid gif-gallery">
-      {
-        (gifs || []).map(gif => <Gif src={gif.src} alt={gif.title} />)
-      }
+    <div className="gif-gallery">
+      {(gifs || []).map(gif =>
+        <Gif src={gif.src} alt={gif.title} />
+      )}
     </div>
   )
 }
 
-const Gif = (props) => {
-  return (
-    <div className="column">
-      <div className="ui segment">
-        <img className="gif" alt="Gif" {...props} />
+class Gif extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      imageSpan: 0,
+    }
+
+    this.imageRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.imageRef.current.addEventListener('load', () => this.setSpan())
+  }
+
+  setSpan() {
+    const originalGifHeight = this.imageRef.current.clientHeight;
+
+    // find the ratio of original height and current forced height through CSS grid
+    const imageSpan = Math.ceil(originalGifHeight / 10);
+
+    // sets how many grid to span to based on original height of gif
+    this.setState({
+      imageSpan
+    })
+  }
+
+  render() {
+    return (
+      <div className="ui large image gif-segment" style={{
+        gridRowEnd: `span ${this.state.imageSpan}`,
+      }}>
+        <img ref={this.imageRef} className="gif" alt="Gif" {...this.props} />
       </div>
-    </div>
-  )
-};
+    );
+  }
+}
 
 export default GifParty;
