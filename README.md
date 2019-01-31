@@ -28,3 +28,9 @@ Create a simple UI for a comment block
 
 ## chilly-or-sunny
 A simple and silly app to determine whether based on current location and weather
+
+## gifparty
+Quickly search for GIFs by query using Giphy API
+
+## songs
+Fetch and display songs, implementing Redux with React
