@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Wow.",
+    "artist": "Post Malone",
+    "duration": "2:30"
+  },
+  {
+    "id": 2,
+    "title": "Mia",
+    "artist": "Bad Bunny",
+    "duration": "5:00"
+  },
+  {
+    "id": 3,
+    "title": "A Lot",
+    "artist": "21 Savage",
+    "duration": "4:05"
+  },
+  {
+    "id": 4,
+    "title": "ZEZE",
+    "artist": "Kodak Black",
+    "duration": "4:30"
+  },
+  {
+    "id": 5,
+    "title": "Meek Mill",
+    "artist": "Going Bad",
+    "duration": "3:45"
+  }
+]

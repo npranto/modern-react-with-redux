@@ -1,21 +1,27 @@
-import { SELECT_SONG } from './../actions/songsActions';
+import { SELECT_SONG, FETCH_SONGS } from './../actions/songsActions';
 
 const defaultState = {
-  songs: [
-    {
-      title: ''
-    }
-  ],
+  songs: [],
   selectedSong: null,
 }
 
-const songReducer = (state = defaultState, action) => {
+const songsReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case 'SELECT_SONG': {
+    case SELECT_SONG: {
       return {
-        ...state
+        ...state,
+        selectedSong: action.payload,
+      }
+    }
+    case FETCH_SONGS: {
+      return {
+        ...state,
+        songs: action.payload,
       }
     }
     default: return state;
   }
-}
+};
+
+export default songsReducer;
+

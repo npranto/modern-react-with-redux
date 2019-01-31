@@ -1,3 +1,9 @@
 .App {
-
+  display: flex;
+}
+.songs-list-wrapper {
+  width: 20%;
+}
+.song-details-wrapper {
+  flex-grow: 1;
 }
