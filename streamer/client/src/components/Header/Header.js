@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import './Header.css';
 import Auth from './../Auth/Auth';
 
 const Header = () => {
   return (
-    <div className="ui secondary menu">
+    <div className="ui secondary menu Header">
       <Link to="/" className="item"><i className="huge podcast icon"></i></Link>
       <div className="right menu">
         <Link to="/" className="item">Streams</Link>
@@ -13,10 +14,7 @@ const Header = () => {
           <button className="ui primary button">Create</button>
         </Link>
         <Link to="/" className="item">
-          <Auth google />
-        </Link>
-        <Link to="/" className="item">
-          <Auth logout />
+          <Auth />
         </Link>
       </div>
     </div>
