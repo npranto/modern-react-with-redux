@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import keys from '../../config/keys';
+import AuthService from './../../services/Auth';
+import { signIn } from './../../state/actions/authActions';
 
-// Login with Google button
 const Login = ({ onSignIn }) => (
   <button className="ui google plus button" onClick={() => onSignIn()}>
     <i className="google plus icon"></i>
@@ -10,9 +11,8 @@ const Login = ({ onSignIn }) => (
   </button>
 );
 
-// Logout with Google button
-const Logout = ({ onLogout }) => (
-  <button className="ui negative basic button" onClick={() => onLogout()}>Logout</button>
+const Logout = ({ onSignout }) => (
+  <button className="ui negative basic button" onClick={() => onSignout()}>Logout</button>
 );
 
 const defaultState = {
@@ -25,117 +25,53 @@ class Auth extends Component {
     ...defaultState,
   }
 
-  createAuthInstance = () => {
-    return window.gapi.auth2.getAuthInstance();
-  }
-
   isSignedIn = () => {
-    return this.auth.isSignedIn.get();
-  }
-
-  getUserProfile = (signInResponse) => {
-    if (!signInResponse) return null;
-    const basicProfile = signInResponse.getBasicProfile();
-    return {
-      id: basicProfile && basicProfile.getId(),
-      firstName: basicProfile && basicProfile.getGivenName(),
-      lastName: basicProfile && basicProfile.getFamilyName(),
-      fullName: basicProfile && basicProfile.getName(),
-      email: basicProfile && basicProfile.getEmail(),
-      avatar: basicProfile && basicProfile.getImageUrl(),
-    }
-  }
-
-  listenForAuthStatusChange = () => {
-    return this.auth.isSignedIn.listen(() => {
-      this.setState({
-        isAuthenticated: this.isSignedIn()
-      })
-    })
-  }
-
-  initializeClient = () => {
-    window.gapi.client.init({
-      client_id: keys && keys.gapi && keys.gapi.client_id,
-      scope: 'email',
-    }).then(() => {
-      this.auth = this.createAuthInstance();
-      console.log(this.auth);
-      this.listenForAuthStatusChange();
-    }).catch(e => alert('Unable to initialize a client on Google'))
-  }
-
-  handleFailedToLoadClient = () => {
-    alert('gapi.client failed to load!');
-  }
-
-  handleExtremeDelayToLoadClient = () => {
-    alert('gapi.client could not load in a timely manner!');
-  }
-
-  loadGApi = () => {
-    window.gapi.load('client',
-      async () => {
-        await this.initializeClient()   // Handle gapi.client initialization.
-      },
-      () => {
-        this.handleFailedToLoadClient()   // Handle loading error.
-      },
-      // 10 seconds (The number of milliseconds to wait before calling the ontimeout function,
-      // if the libraries still haven't loaded)
-      10000,
-      () => {
-        this.handleExtremeDelayToLoadClient();    // Handle timeout.
-      }
-    );
+    return AuthService.isSignedIn();
   }
 
   componentDidMount() {
-    this.loadGApi();
+    AuthService.setup();
+  }
+
+  onAuthChange() {
+    const isAuthenticated = this.isSignedIn();
+    this.setState({
+      isAuthenticated,
+      currentUser: isAuthenticated ? AuthService.getUser() : null
+    })
   }
 
   signIn = () => {
-    return new Promise((resolve, reject) => {
-      this.auth.signIn()
-        .then(signInResponse => {
-          // const currentUser = this.getUserProfile(signInResponse);
-          this.setState(() => ({
-            isAuthenticated: this.isSignedIn(),
-            currentUser: this.getUserProfile(signInResponse),
-          }));
-          resolve(true);
-        })
-        .catch(err => {
-          console.log('Unable to sign in at the moment\n', err);
-          reject(err)
-        })
-    })
+    this.props.signIn();
+    AuthService.signIn()
+      .then(user => user && this.onAuthChange())
+      .catch(error => console.log(error));
   }
 
   signOut = () => {
-    return new Promise((resolve, reject) => {
-      this.auth.signOut()
-        .then(() => {
-          this.setState(() => ({
-            isAuthenticated: this.isSignedIn(),
-            ...defaultState,
-          }));
-          resolve(true);
-        })
-        .catch(err => {
-          console.log('Unable to sign out at the moment\n', err);
-          reject(err)
-        })
-    })
+    AuthService.signOut()
+      .then(isDone => isDone && this.onAuthChange())
+      .catch(error => console.log(error));
   }
 
   render() {
     console.log({ isAuthenticated: this.state.isAuthenticated });
     console.log({ currentUser: this.state.currentUser });
+    console.log({ auth: this.props.auth });
     return !this.state.isAuthenticated
       ? <Login onSignIn={this.signIn} />
-      : <Logout onLogout={this.signOut} />
+      : <Logout onSignout={this.signOut} />
   }
 };
 
-export default Auth;
+const mapStateToProps = ({ auth }) => {
+  return {
+    auth,
+  }
+}
+
+const mapDispatchToProps = {
+  signIn,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
