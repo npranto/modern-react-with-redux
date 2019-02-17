@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import AuthService from './../../services/Auth';
-import { signIn } from './../../state/actions/authActions';
 
 const Login = ({ onSignIn }) => (
   <button className="ui google plus button" onClick={() => onSignIn()}>
@@ -42,7 +40,6 @@ class Auth extends Component {
   }
 
   signIn = () => {
-    this.props.signIn();
     AuthService.signIn()
       .then(user => user && this.onAuthChange())
       .catch(error => console.log(error));
@@ -57,21 +54,10 @@ class Auth extends Component {
   render() {
     console.log({ isAuthenticated: this.state.isAuthenticated });
     console.log({ currentUser: this.state.currentUser });
-    console.log({ auth: this.props.auth });
     return !this.state.isAuthenticated
       ? <Login onSignIn={this.signIn} />
       : <Logout onSignout={this.signOut} />
   }
 };
 
-const mapStateToProps = ({ auth }) => {
-  return {
-    auth,
-  }
-}
-
-const mapDispatchToProps = {
-  signIn,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default Auth;

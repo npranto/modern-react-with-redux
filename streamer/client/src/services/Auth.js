@@ -1,43 +1,35 @@
 import keys from '../config/keys';
 
 const loadGoogleAPIClient = () => {
-  window.gapi.load('client',
-    async () => {
-      await initializeClient();   // Handle gapi.client initialization.
-    },
-    () => {
-      handleFailedToLoadClient()   // Handle loading error.
-    },
-    // 10 seconds (The number of milliseconds to wait before calling the ontimeout function,
-    // if the libraries still haven't loaded)
-    10000,
-    () => {
-      handleExtremeDelayToLoadClient();    // Handle timeout.
-    }
-  );
+  return new Promise((resolve, reject) => {
+    window.gapi.load('client',
+      async () => {
+        await initializeClient();
+        resolve();
+      },    // Handle gapi.client initialization.
+      () => handleFailedToLoadClient(),         // Handle loading error.
+      10000,                                    // 10 seconds
+      () => handleExtremeDelayToLoadClient(),   // Handle timeout.
+    );
+  })
 };
 
-const initializeClient = () => {
-  window.gapi.client.init({
-    client_id: keys && keys.gapi && keys.gapi.client_id,
-    scope: 'email',
-  }).then(() => {
-    window.auth = createAuthInstance();
-    trackAuthChange();
-  }).catch(e => alert('Unable to initialize a client on Google'))
+const initializeClient = async () => {
+    await window.gapi.client.init({
+      client_id: keys && keys.gapi && keys.gapi.client_id,
+      scope: 'email',
+    }).then(async () => {
+      window.auth = createAuthInstance();
+      console.log({ isSignedIn: isSignedIn() });
+      trackAuthChange();
+    }).catch(e => alert('Unable to initialize a client on Google'))
 };
 
-const createAuthInstance = () => {
-  return window.gapi && window.gapi.auth2 && window.gapi.auth2.getAuthInstance();
-}
+const createAuthInstance = () => window.gapi && window.gapi.auth2 && window.gapi.auth2.getAuthInstance();
 
-const trackAuthChange = () => {
-  isSignedIn && window.auth.isSignedIn.listen();
-}
+export const trackAuthChange = () => isSignedIn && window.auth.isSignedIn.listen();
 
-export const isSignedIn = () => {
-  return window.auth && window.auth.isSignedIn && window.auth.isSignedIn.get();
-}
+export const isSignedIn = () => window.auth && window.auth.isSignedIn && window.auth.isSignedIn.get();
 
 export const signIn = () => {
   return new Promise((resolve, reject) => {
@@ -56,9 +48,7 @@ export const signIn = () => {
 export const signOut = () => {
   return new Promise((resolve, reject) => {
     window.auth.signOut()
-      .then(() => {
-        resolve(true);
-      })
+      .then(() => resolve(true))
       .catch(error => {
         console.log('Unable to sign out at the moment\n', error);
         reject({
@@ -70,15 +60,14 @@ export const signOut = () => {
 }
 
 export const getUser = () => {
-  const currentUser = isSignedIn() && window.auth.currentUser.get();
-  const basicProfile = (currentUser && currentUser.getBasicProfile()) || {};
+  const profile = isSignedIn() && window.auth.currentUser.get().getBasicProfile();
   return {
-    id: basicProfile && basicProfile.getId(),
-    firstName: basicProfile && basicProfile.getGivenName(),
-    lastName: basicProfile && basicProfile.getFamilyName(),
-    fullName: basicProfile && basicProfile.getName(),
-    email: basicProfile && basicProfile.getEmail(),
-    avatar: basicProfile && basicProfile.getImageUrl(),
+    id: profile && profile.getId(),
+    firstName: profile && profile.getGivenName(),
+    lastName: profile && profile.getFamilyName(),
+    fullName: profile && profile.getName(),
+    email: profile && profile.getEmail(),
+    avatar: profile && profile.getImageUrl(),
   }
 }
 
@@ -91,7 +80,11 @@ const handleExtremeDelayToLoadClient = () => {
 };
 
 export const setup = async () => {
-  await loadGoogleAPIClient();
+  return new Promise(async (resolve, reject) => {
+    await loadGoogleAPIClient();
+    resolve();
+  })
+
 }
 
 export default {
@@ -99,7 +92,8 @@ export default {
   signIn,
   isSignedIn,
   getUser,
-  signOut
+  signOut,
+  trackAuthChange
 }
 
 
