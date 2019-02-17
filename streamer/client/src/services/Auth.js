@@ -1,12 +1,12 @@
 import keys from '../config/keys';
 
-const loadGoogleAPIClient = () => {
+const loadGoogleAPIClient = async () => {
   return new Promise((resolve, reject) => {
     window.gapi.load('client',
       async () => {
-        await initializeClient();
+        await initializeClient();               // Handle gapi.client initialization.
         resolve();
-      },    // Handle gapi.client initialization.
+      },
       () => handleFailedToLoadClient(),         // Handle loading error.
       10000,                                    // 10 seconds
       () => handleExtremeDelayToLoadClient(),   // Handle timeout.
@@ -15,14 +15,18 @@ const loadGoogleAPIClient = () => {
 };
 
 const initializeClient = async () => {
+  try {
     await window.gapi.client.init({
       client_id: keys && keys.gapi && keys.gapi.client_id,
       scope: 'email',
-    }).then(async () => {
-      window.auth = createAuthInstance();
-      console.log({ isSignedIn: isSignedIn() });
-      trackAuthChange();
-    }).catch(e => alert('Unable to initialize a client on Google'))
+    });
+    window.auth = createAuthInstance();
+    console.log({ isSignedIn: isSignedIn() });
+    trackAuthChange();
+  }
+  catch(error) {
+    console.error('Unable to initialize a client on Google\n', error);
+  }
 };
 
 const createAuthInstance = () => window.gapi && window.gapi.auth2 && window.gapi.auth2.getAuthInstance();
@@ -80,11 +84,7 @@ const handleExtremeDelayToLoadClient = () => {
 };
 
 export const setup = async () => {
-  return new Promise(async (resolve, reject) => {
-    await loadGoogleAPIClient();
-    resolve();
-  })
-
+  await loadGoogleAPIClient();
 }
 
 export default {
