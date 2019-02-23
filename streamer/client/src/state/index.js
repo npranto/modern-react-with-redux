@@ -4,7 +4,10 @@ import logger from 'redux-logger';
 
 import reducers from './reducers';
 
-const middleware = [thunk, logger];
+const middleware = [
+  thunk,
+  // logger
+];
 
 const composeEnhancers = (typeof window === 'object') && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
   ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

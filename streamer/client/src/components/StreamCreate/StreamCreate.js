@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { createStream } from '../../state/actions/streamsActions';
 
 const Input = ({ label, input, meta }) => {
-  console.log(meta);
   return (
     <div className={`field ${(meta && meta.touched && meta.error) ? 'error' : ''}`}>
       <label>{label}</label>
@@ -27,34 +28,92 @@ const ErrorMessage = ({ error, touched }) => {
     return null;
   }
   return touched && error && (
-    <div class="ui pointing red basic label">
+    <div className="ui pointing red basic label">
       {error}
     </div>
   )
 }
 
-class StreamCreate extends Component {
-  onCreateStreamSubmit(values) {
-    console.log(values);
+class Notification extends Component {
+  state = {
+    autoCloseDuration: 5000,
+    showNotification: true,
+  }
+
+  componentDidMount() {
+    if (this.props.autoClose) {
+      this.startAutoCloseTimer();
+    }
+  }
+
+  startAutoCloseTimer = async () => {
+    await setTimeout(() => {
+      this.setState({ showNotification: false })
+    }, this.props.autoCloseDuration || this.state.autoCloseDuration);
   }
 
   render() {
-    console.log(this.props);
-    return (
-      <div className="ui segment StreamCreate">
-        <h2 className="ui header">
-          <i className="window maximize icon"></i>
-          <div className="content">
-            Create Stream
-            <div className="sub header">Let's create a new stream</div>
-          </div>
-        </h2>
+    const { type, message, description } = this.props;
 
-        <form onSubmit={this.props.handleSubmit(this.onCreateStreamSubmit)} className="ui form">
-          <Field component={Input} name="title" type="text" label="Title" />
-          <Field component={TextArea} name="description" placeholder="Add description..." label="Description" />
-          <button className={`ui button primary ${!this.props.valid ? 'disabled' : ''}`} type="submit">Create</button>
-        </form>
+    return this.state.showNotification && (
+      <div className={`ui ${type} message`}>
+        <div className="header">
+          <i class="check icon"></i> {message}
+        </div>
+        <p>{description}</p>
+      </div>
+    )
+  }
+}
+
+class StreamCreate extends Component {
+  onCreateStreamSubmit = (values) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        console.log(values);
+        await this.props.createStream(values);
+        this.props.reset();
+        resolve();
+      }, 2000);
+    })
+  }
+
+  render() {
+    return (
+      <div className="StreamCreate">
+        {this.props.submitSucceeded &&
+          <Notification
+            autoClose
+            type="positive"
+            message="Success!"
+            description="Your new stream has been created!"
+          />
+        }
+
+        {this.props.submitFailed &&
+          <Notification
+            autoClose
+            type="negative"
+            message="Oops!"
+            description="Let's try again..."
+          />
+        }
+
+        <div className="ui segment StreamCreate">
+          <h2 className="ui header">
+            <i className="window maximize icon"></i>
+            <div className="content">
+              Create Stream
+              <div className="sub header">Let's create a new stream</div>
+            </div>
+          </h2>
+
+          <form onSubmit={this.props.handleSubmit(this.onCreateStreamSubmit)} className={`ui form ${this.props.submitting ? 'loading' : ''}`}>
+            <Field component={Input} name="title" type="text" label="Title" />
+            <Field component={TextArea} name="description" placeholder="Add description..." label="Description" />
+            <button className={`ui button primary ${!this.props.valid ? 'disabled' : ''}`} type="submit">Create</button>
+          </form>
+        </div>
       </div>
     )
   }
@@ -71,7 +130,13 @@ const validate = (values) => {
   return errors;
 }
 
-export default reduxForm({
+const CreateStreamForm = reduxForm({
   form: 'createStream',
   validate
-})(StreamCreate);
+})(StreamCreate)
+
+const mapDispatchToProps = {
+  createStream
+};
+
+export default connect(null, mapDispatchToProps)(CreateStreamForm);
