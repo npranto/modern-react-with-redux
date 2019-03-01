@@ -20,8 +20,11 @@ class Auth2 extends Component {
     return AuthService.isSignedIn();
   }
 
-  componentDidMount() {
-    this.props.setupAuth();
+  async componentDidMount() {
+    if (!this.isSignedIn()) {
+      await this.props.setupAuth();
+    }
+    this.props.getAuthStatus();
   }
 
   onSignIn = () => {

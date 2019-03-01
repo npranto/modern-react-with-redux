@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Field, reduxForm } from 'redux-form';
+// import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { createStream } from '../../state/actions/streamsActions';
+import { Formik, Form, Field } from 'formik';
 
 const Input = ({ label, input, meta }) => {
   return (
@@ -66,7 +67,7 @@ class Notification extends Component {
   }
 }
 
-class StreamCreate extends Component {
+class StreamCreate2 extends Component {
   onCreateStreamSubmit = (values) => {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
@@ -109,37 +110,46 @@ class StreamCreate extends Component {
             </div>
           </h2>
 
-          <input type="text" />
+          <Formik
+            initialValues={{ title: '', description: '' }}
+            validate={values => {
+              const errors = {};
+              if (values && !values.title)
+                errors.title = 'What\'s the name of your stream?';
+              if (values && !values.description)
+                errors.description = 'Tell us a little about your stream';
 
-          <form onSubmit={this.props.handleSubmit(this.onCreateStreamSubmit)} className={`ui form ${this.props.submitting ? 'loading' : ''}`}>
-            <Field component={Input} name="title" type="text" label="Title" />
-            <Field component={TextArea} name="description" placeholder="Add description..." label="Description" />
-            <button className={`ui button primary ${!this.props.valid ? 'disabled' : ''}`} type="submit">Create</button>
-          </form>
+              return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                // alert(JSON.stringify(values, null, 2));
+                console.log({ values });
+                setSubmitting(false);
+              }, 2000);
+            }}
+          >
+            {({
+              isSubmitting,
+              /* and other goodies */
+            }) => (
+              <Form className={`ui form ${isSubmitting ? 'loading' : ''}`}>
+                <Field component={Input} name="title" type="text" label="Title" />
+                <Field component={TextArea} name="description" placeholder="Add description..." label="Description" />
+                <button className={`ui button primary ${isSubmitting ? 'disabled' : ''}`} type="submit">
+                  Create
+                </button>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
     )
   }
 };
 
-const validate = (values) => {
-  const errors = {};
-
-  if (values && !values.title)
-    errors.title = 'What\'s the name of your stream?';
-  if (values && !values.description)
-    errors.description = 'Tell us a little about your stream';
-
-  return errors;
-}
-
-const CreateStreamForm = reduxForm({
-  form: 'createStream',
-  validate,
-})(StreamCreate)
-
 const mapDispatchToProps = {
   createStream
 };
 
-export default connect(null, mapDispatchToProps)(CreateStreamForm);
+export default connect(null, mapDispatchToProps)(StreamCreate2);
