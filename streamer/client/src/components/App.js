@@ -7,6 +7,7 @@ import store from './../state';
 import './App.css';
 import Header from './Header/Header';
 import StreamCreate from './StreamCreate/StreamCreate';
+import StreamCreate2 from './StreamCreate/StreamCreate2';
 import StreamDelete from './StreamDelete/StreamDelete';
 import StreamEdit from './StreamEdit/StreamEdit';
 import StreamList from './StreamList/StreamList';
@@ -21,7 +22,7 @@ class App extends Component {
             <div className="routes">
               <Header />
               <Route path="/" exact component={StreamList} />
-              <Route path="/streams/new" exact render={(props) => <StreamCreate {...props} />} />
+              <Route path="/streams/new" exact component={StreamCreate2} />
               <Route path="/streams/edit" exact component={StreamEdit} />
               <Route path="/streams/delete" exact component={StreamDelete} />
               <Route path="/streams/show" exact component={StreamShow} />

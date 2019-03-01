@@ -12,7 +12,7 @@ export const setupAuth = () => {
     await dispatch({
       type: SETUP_AUTH,
     });
-    await dispatch(getAuthStatus());
+    // await dispatch(getAuthStatus());
   })
 }
 

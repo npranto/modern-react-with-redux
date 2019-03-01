@@ -7,19 +7,28 @@ export const UPDATE_STREAM = 'UPDATE_STREAM';
 export const DELETE_STREAM = 'DELETE_STREAM';
 
 export const createStream = (newStream) => {
-  return async (dispatch) => {
-    try {
-      const { data } = await API.streams.createStream(newStream);
-      if (data) {   // successfully created a new stream
-        dispatch({
-          type: CREATE_NEW_STREAM,
-        })
-        dispatch(getStreams());
-      }
-    }
-    catch(e) {
-      throw new Error(e);
-    }
+  return async (dispatch, getState) => {
+    const { auth } = getState();
+    console.log({ auth });
+    // const { currentUser } = auth;
+
+    // const userId = currentUser && currentUser.id;
+
+    // try {
+    //   const { data } = await API.streams.createStream({
+    //     ...newStream,
+    //     createdBy: userId
+    //   });
+    //   if (data) {   // successfully created a new stream
+    //     dispatch({
+    //       type: CREATE_NEW_STREAM,
+    //     })
+    //     dispatch(getStreams());
+    //   }
+    // }
+    // catch(e) {
+    //   throw new Error(e);
+    // }
   }
 }
 
