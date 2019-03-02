@@ -5,23 +5,23 @@ const defaultState = {
   currentUser: null,
 }
 
-const authReducer = (state = defaultState, { type, isAuthenticated, currentUser, message }) => {
+const authReducer = (state = defaultState, { type, isAuthenticated, currentUser }) => {
   switch (type) {
     case SETUP_AUTH: {
       return {
-        ...defaultState,
+        ...state,
         isAuthenticated,
         currentUser,
       }
     }
     case UPDATE_AUTH_STATUS: {
       return {
-        ...defaultState,
+        ...state,
         isAuthenticated,
         currentUser,
       }
     }
-    default: return defaultState;
+    default: return state;
   }
 }
 

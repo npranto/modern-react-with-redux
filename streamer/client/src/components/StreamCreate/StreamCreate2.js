@@ -2,71 +2,8 @@ import React, { Component } from 'react';
 // import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { createStream } from '../../state/actions/streamsActions';
-import { Formik, Form, Field } from 'formik';
-
-const Input = ({ label, input, meta }) => {
-  return (
-    <div className={`field ${(meta && meta.touched && meta.error) ? 'error' : ''}`}>
-      <label>{label}</label>
-      <input {...input} />
-      <ErrorMessage {...meta} />
-    </div>
-  )
-}
-
-const TextArea = ({ label, input, meta }) => {
-  return (
-    <div className={`field ${(meta && meta.touched && meta.error)  ? 'error' : ''}`}>
-      <label>{label}</label>
-      <textarea {...input}></textarea>
-      <ErrorMessage {...meta} />
-    </div>
-  )
-}
-
-const ErrorMessage = ({ error, touched }) => {
-  if (!error) {
-    return null;
-  }
-  return touched && error && (
-    <div className="ui pointing red basic label">
-      {error}
-    </div>
-  )
-}
-
-class Notification extends Component {
-  state = {
-    autoCloseDuration: 5000,
-    showNotification: true,
-  }
-
-  componentDidMount() {
-    if (this.props.autoClose) {
-      this.startAutoCloseTimer();
-    }
-  }
-
-  startAutoCloseTimer = async () => {
-    await setTimeout(() => {
-      this.setState({ showNotification: false })
-    }, this.props.autoCloseDuration || this.state.autoCloseDuration);
-  }
-
-  render() {
-    const { type, message, description } = this.props;
-
-    return this.state.showNotification && (
-      <div className={`ui ${type} message`}>
-        <div className="header">
-          <i class="check icon"></i> {message}
-        </div>
-        <p>{description}</p>
-      </div>
-    )
-  }
-}
-
+import { Formik, withFormik } from 'formik';
+import Notification from './../elements/Notification';
 class StreamCreate2 extends Component {
   onCreateStreamSubmit = (values) => {
     return new Promise((resolve, reject) => {
@@ -80,21 +17,32 @@ class StreamCreate2 extends Component {
   }
 
   render() {
-    console.log({ props: this.props });
+    const {
+      handleSubmit,
+      isSubmitting,
+      handleChange,
+      handleBlur,
+      values,
+      errors,
+      touched,
+      status
+    } = this.props;
     return (
       <div className="StreamCreate">
-        {this.props.submitSucceeded &&
+        {status && status === 'positive' &&
           <Notification
             autoClose
+            autoCloseDuration={2000}
             type="positive"
             message="Success!"
             description="Your new stream has been created!"
           />
         }
 
-        {this.props.submitFailed &&
+        {status && status === 'negative' &&
           <Notification
             autoClose
+            autoCloseDuration={2000}
             type="negative"
             message="Oops!"
             description="Let's try again..."
@@ -110,38 +58,44 @@ class StreamCreate2 extends Component {
             </div>
           </h2>
 
-          <Formik
-            initialValues={{ title: '', description: '' }}
-            validate={values => {
-              const errors = {};
-              if (values && !values.title)
-                errors.title = 'What\'s the name of your stream?';
-              if (values && !values.description)
-                errors.description = 'Tell us a little about your stream';
+          <form onSubmit={handleSubmit} className={`ui form ${isSubmitting ? 'loading' : ''}`}>
+            <div className={`field`}>
+              <label>Title</label>
+              <input
+                type="text"
+                name="title"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.title}
+              />
+              {errors.title && touched.title && (
+                <div className="ui pointing red basic label">
+                  {errors.title}
+                </div>
+              )}
+            </div>
 
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                // alert(JSON.stringify(values, null, 2));
-                console.log({ values });
-                setSubmitting(false);
-              }, 2000);
-            }}
-          >
-            {({
-              isSubmitting,
-              /* and other goodies */
-            }) => (
-              <Form className={`ui form ${isSubmitting ? 'loading' : ''}`}>
-                <Field component={Input} name="title" type="text" label="Title" />
-                <Field component={TextArea} name="description" placeholder="Add description..." label="Description" />
-                <button className={`ui button primary ${isSubmitting ? 'disabled' : ''}`} type="submit">
-                  Create
-                </button>
-              </Form>
-            )}
-          </Formik>
+
+            <div className={`field`}>
+              <label>Description</label>
+              <textarea
+                type="text"
+                name="description"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.description}
+              ></textarea>
+              {errors.description && touched.description && (
+                <div className="ui pointing red basic label">
+                  {errors.description}
+                </div>
+              )}
+            </div>
+
+            <button className={`ui button primary ${isSubmitting ? 'disabled' : ''}`} type="submit">
+              Create
+            </button>
+          </form>
         </div>
       </div>
     )
@@ -152,4 +106,34 @@ const mapDispatchToProps = {
   createStream
 };
 
-export default connect(null, mapDispatchToProps)(StreamCreate2);
+const WithFormikStreamCreate2 = withFormik({
+  mapPropsToValues: () => ({
+    title: '',
+    description: ''
+  }),
+
+  // Custom sync validation
+  validate: values => {
+    const errors = {};
+    if (values && !values.title)
+      errors.title = 'What\'s the name of your stream?';
+    if (values && !values.description)
+      errors.description = 'Tell us a little about your stream';
+    return errors;
+  },
+
+  handleSubmit: (values, { setSubmitting, resetForm, setStatus, props }) => {
+    console.log(values);
+    console.log(props);
+    setTimeout(async () => {
+      await props.createStream(values);
+      setSubmitting(false);
+      resetForm();
+      setStatus('positive');
+    }, 1000);
+  },
+
+  displayName: 'createStream',
+})(StreamCreate2);
+
+export default connect(null, mapDispatchToProps)(WithFormikStreamCreate2);

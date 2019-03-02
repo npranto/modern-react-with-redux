@@ -1,12 +1,19 @@
-import { GET_STREAMS } from './../actions/streamsActions';
+import { GET_STREAMS, CREATE_NEW_STREAM } from './../actions/streamsActions';
 
 const defaultState = [];
 
-const streamsReducer = (state = defaultState, { type, streams }) => {
-  switch(type) {
+const streamsReducer = (state = defaultState, action) => {
+  switch(action.type) {
+    case CREATE_NEW_STREAM: {
+      return [
+        ...state,
+        action.newStream,
+      ]
+    }
     case GET_STREAMS: {
       return [
-        ...streams,
+        ...state,
+        ...action.streams,
       ]
     }
     default: return state;
