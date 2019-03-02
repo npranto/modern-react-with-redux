@@ -1,4 +1,5 @@
 import API from '../../api';
+import { getCurrentUser } from '../../helpers/authHelpers';
 
 export const CREATE_NEW_STREAM = 'CREATE_NEW_STREAM';
 export const GET_STREAMS = 'GET_STREAMS';

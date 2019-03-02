@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import AuthService from '../../services/Auth';
 import { setupAuth, getAuthStatus, signIn, signOut } from '../../state/actions/authActions';
+import { isAuthenticated } from './../../helpers/authHelpers';
 
 const Login = ({ onSignIn }) => (
   <button className="ui google plus button" onClick={() => onSignIn()}>
@@ -36,9 +37,7 @@ class Auth2 extends Component {
   }
 
   render() {
-    const { isAuthenticated } = this.props.auth;
-
-    return !isAuthenticated
+    return !isAuthenticated(this.props.auth)
       ? <Login onSignIn={this.onSignIn} />
       : <Logout onSignout={this.onSignout} />
   }
