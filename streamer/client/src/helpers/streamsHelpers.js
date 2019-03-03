@@ -12,3 +12,11 @@ export const isStreamCreatedByCurrentUser = (stream) => {
   }
   return false;
 }
+
+export const getStreamsById = (streamId) => {
+  const { streams } = getState();
+
+  if (streamId && streams) {
+    return streams.find(stream => stream && (stream.id === streamId));
+  }
+}
