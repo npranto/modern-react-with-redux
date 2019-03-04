@@ -12,7 +12,6 @@ const streamsReducer = (state = defaultState, action) => {
     }
     case GET_STREAMS: {
       return [
-        ...state,
         ...action.streams,
       ]
     }

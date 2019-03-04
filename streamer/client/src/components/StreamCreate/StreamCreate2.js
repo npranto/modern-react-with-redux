@@ -4,102 +4,90 @@ import { connect } from 'react-redux';
 import { createStream } from '../../state/actions/streamsActions';
 import { Formik, withFormik } from 'formik';
 import Notification from './../elements/Notification';
-class StreamCreate2 extends Component {
-  onCreateStreamSubmit = (values) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        console.log(values);
-        await this.props.createStream(values);
-        this.props.reset();
-        resolve();
-      }, 2000);
-    })
-  }
 
-  render() {
-    const {
-      handleSubmit,
-      isSubmitting,
-      handleChange,
-      handleBlur,
-      values,
-      errors,
-      touched,
-      status
-    } = this.props;
-    return (
-      <div className="StreamCreate">
-        {status && status === 'positive' &&
-          <Notification
-            autoClose
-            autoCloseDuration={2000}
-            type="positive"
-            message="Success!"
-            description="Your new stream has been created!"
-          />
-        }
+const StreamCreate2 = (props) => {
+  const {
+    handleSubmit,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    // status
+  } = props;
+  return (
+    <div className="StreamCreate">
+      {/* {status && status === 'positive' &&
+        <Notification
+          autoClose
+          autoCloseDuration={2000}
+          type="positive"
+          message="Success!"
+          description="Your new stream has been created!"
+        />
+      } */}
 
-        {status && status === 'negative' &&
-          <Notification
-            autoClose
-            autoCloseDuration={2000}
-            type="negative"
-            message="Oops!"
-            description="Let's try again..."
-          />
-        }
+      {/* {status && status === 'negative' &&
+        <Notification
+          autoClose
+          autoCloseDuration={2000}
+          type="negative"
+          message="Oops!"
+          description="Let's try again..."
+        />
+      } */}
 
-        <div className="ui segment StreamCreate">
-          <h2 className="ui header">
-            <i className="window maximize icon"></i>
-            <div className="content">
-              Create Stream
-              <div className="sub header">Let's create a new stream</div>
-            </div>
-          </h2>
+      <div className="ui segment StreamCreate">
+        <h2 className="ui header">
+          <i className="window maximize icon"></i>
+          <div className="content">
+            Create Stream
+            <div className="sub header">Let's create a new stream</div>
+          </div>
+        </h2>
 
-          <form onSubmit={handleSubmit} className={`ui form ${isSubmitting ? 'loading' : ''}`}>
-            <div className={`field`}>
-              <label>Title</label>
-              <input
-                type="text"
-                name="title"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.title}
-              />
-              {errors.title && touched.title && (
-                <div className="ui pointing red basic label">
-                  {errors.title}
-                </div>
-              )}
-            </div>
+        <form onSubmit={handleSubmit} className={`ui form ${isSubmitting ? 'loading' : ''}`}>
+          <div className={`field`}>
+            <label>Title</label>
+            <input
+              type="text"
+              name="title"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.title}
+            />
+            {errors.title && touched.title && (
+              <div className="ui pointing red basic label">
+                {errors.title}
+              </div>
+            )}
+          </div>
 
 
-            <div className={`field`}>
-              <label>Description</label>
-              <textarea
-                type="text"
-                name="description"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.description}
-              ></textarea>
-              {errors.description && touched.description && (
-                <div className="ui pointing red basic label">
-                  {errors.description}
-                </div>
-              )}
-            </div>
+          <div className={`field`}>
+            <label>Description</label>
+            <textarea
+              type="text"
+              name="description"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.description}
+            ></textarea>
+            {errors.description && touched.description && (
+              <div className="ui pointing red basic label">
+                {errors.description}
+              </div>
+            )}
+          </div>
 
-            <button className={`ui button primary ${isSubmitting ? 'disabled' : ''}`} type="submit">
-              Create
-            </button>
-          </form>
-        </div>
+          <button className={`ui button primary ${isSubmitting ? 'disabled' : ''}`} type="submit">
+            Create
+          </button>
+        </form>
       </div>
-    )
-  }
+    </div>
+  )
 };
 
 const mapDispatchToProps = {
