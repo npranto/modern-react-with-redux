@@ -1,52 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { getStreams } from './../../state/actions/streamsActions';
-import { isStreamCreatedByCurrentUser, getStreamsById } from '../../helpers/streamsHelpers';
-import ConfirmStreamDeleteModal from './../elements/ConfirmStreamDeleteModal';
+import { getStreams, deleteStream } from './../../state/actions/streamsActions';
+import { isStreamCreatedByCurrentUser } from '../../helpers/streamsHelpers';
 
 const $ = window.$;
 
 const Streams = (props) => (
   props.streams.map((stream, id) => (
-    <Stream key={id} {...stream} />
+    <Stream key={id} {...stream} {...props} />
   ))
 );
 
-const defaultState = {
-  showConfirmStreamDeleteModal: false,
-  streamToDelete: null,
-}
 class Stream extends Component {
-  state = {
-    ...defaultState,
-  }
-
-  // ran when an user clicks on the delete button of a stream
-  onAttemptToDelete(streamId) {
-    this.setState({
-      showConfirmStreamDeleteModal: true,
-      streamToDelete: getStreamsById(streamId),
-    })
-  }
-
-  resetState = () => {
-    this.setState({
-      ...defaultState
-    })
-  }
-
-  // ran when an user confirms on the ConfirmStreamDeleteModal to delete a stream
-  onConfirmToDelete(streamId) {
-    console.log('YES, PLEASE DELETE!', { streamId });
-    this.resetState();
-  }
-
-  // ran when an user denies on the ConfirmStreamDeleteModal to delete a stream
-  onDenyToDelete(streamId) {
-    console.log('YES, PLEASE DELETE!', { streamId });
-    this.resetState();
-  }
-
   render() {
     const {
       id,
@@ -54,17 +19,9 @@ class Stream extends Component {
       description,
       isEditable,
     } = this.props;
-    console.log({ showConfirmStreamDeleteModal: this.state.showConfirmStreamDeleteModal });
+
     return (
       <Fragment>
-        {this.state.showConfirmStreamDeleteModal && this.state.streamToDelete &&
-          <ConfirmStreamDeleteModal
-            stream={this.state.streamToDelete}
-            onConfirm={(streamId) => this.onConfirmToDelete(streamId)}
-            onDeny={(streamId) => this.onDenyToDelete(streamId)}
-          />
-        }
-
         <div className="ui items">
           <div className="item">
             <a href="/" className="ui tiny image">
@@ -80,7 +37,7 @@ class Stream extends Component {
                     <button class="tiny ui black basic button">
                       Edit
                     </button>
-                    <button class="tiny ui negative basic button" onClick={() => this.onAttemptToDelete(id)}>
+                    <button class="tiny ui negative basic button">
                       Delete
                     </button>
                   </div>
@@ -97,26 +54,12 @@ class Stream extends Component {
 
 
 class StreamList extends Component {
-  // state = {
-  //   showConfirmStreamDeleteModal: false,
-  //   activeStream: null,
-  // }
-
   componentDidMount() {
     this.props.getStreams();
   }
 
-  // onConfirmToDelete(streamId) {
-  //   this.setState({
-  //     activeStream: getStreamsById(streamId),
-  //     showConfirmStreamDeleteModal: true,
-  //   })
-  // }
-
-  reset
-
   render() {
-    const shapedStreams = this.props.streams.map(stream => {
+    const enhancedStreams = this.props.streams.map(stream => {
       return {
         ...stream,
         // to determine whether current user can interact with a stream
@@ -124,13 +67,13 @@ class StreamList extends Component {
       }
     })
 
-    console.log({ shapedStreams });
+    console.log({ enhancedStreams });
 
     return (
       <div className="StreamList">
         <Streams
-          streams={shapedStreams || []}
-          // onConfirmToDelete={(streamId) => this.onConfirmToDelete(streamId)}
+          {...this.props}
+          streams={enhancedStreams || []}
         />
       </div>
     )
@@ -146,6 +89,7 @@ const mapStateToProps = ({ auth, streams }) => {
 
 const mapDispatchToProps = {
   getStreams,
+  deleteStream,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StreamList);
