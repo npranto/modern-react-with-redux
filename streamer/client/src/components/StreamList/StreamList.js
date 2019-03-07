@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { getStreams, deleteStream } from './../../state/actions/streamsActions';
+import { setStreamToEdit } from '../../state/actions/editStreamActions';
 import { isStreamCreatedByCurrentUser, getStreamsById } from '../../helpers/streamsHelpers';
 import './StreamList.css';
 
@@ -37,11 +38,21 @@ class Stream extends Component {
   onApproveToDelete(streamId) {
     console.log('Approving to delete...', { streamId });
     this.resetModal();
+    setTimeout(() => {
+      this.props.deleteStream(streamId);
+    }, 1500)
   }
 
   onDenyToDelete(streamId) {
     console.log('Denying to delete...', { streamId });
     this.resetModal();
+  }
+
+  async onAttemptToEdit(streamId) {
+    const streamToEdit = getStreamsById(streamId);
+    console.log({ streamToEdit });
+    await this.props.setStreamToEdit(streamToEdit);
+    this.props.history.push('/streams/edit');
   }
 
   render() {
@@ -74,7 +85,7 @@ class Stream extends Component {
               </div>
               {isEditable && (
                   <div className="extra">
-                    <button class="tiny ui black basic button">
+                    <button class="tiny ui black basic button" onClick={() => this.onAttemptToEdit(id)}>
                       Edit
                     </button>
                     <button class="tiny ui negative basic button" onClick={(e) => this.onAttemptToDelete(id)}>
@@ -229,6 +240,7 @@ const mapStateToProps = ({ auth, streams }) => {
 const mapDispatchToProps = {
   getStreams,
   deleteStream,
+  setStreamToEdit,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StreamList);

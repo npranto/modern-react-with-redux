@@ -18,26 +18,6 @@ const StreamCreate2 = (props) => {
   } = props;
   return (
     <div className="StreamCreate">
-      {/* {status && status === 'positive' &&
-        <Notification
-          autoClose
-          autoCloseDuration={2000}
-          type="positive"
-          message="Success!"
-          description="Your new stream has been created!"
-        />
-      } */}
-
-      {/* {status && status === 'negative' &&
-        <Notification
-          autoClose
-          autoCloseDuration={2000}
-          type="negative"
-          message="Oops!"
-          description="Let's try again..."
-        />
-      } */}
-
       <div className="ui segment StreamCreate">
         <h2 className="ui header">
           <i className="window maximize icon"></i>
