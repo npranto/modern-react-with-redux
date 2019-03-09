@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-// import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { createStream, updateStream } from '../../state/actions/streamsActions';
 import { resetStreamToEdit  } from '../../state/actions/editStreamActions';
 import { withFormik } from 'formik';
 
 class StreamEdit extends Component {
+  componentDidMount() {
+    if (this.props.editStream && !this.props.editStream.stream) {
+      this.props.history.push('/');
+    }
+  }
 
   onCancelToEdit = () => {
     this.props.history.push('/');
