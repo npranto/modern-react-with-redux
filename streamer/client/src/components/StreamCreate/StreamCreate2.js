@@ -98,6 +98,7 @@ const WithFormikStreamCreate2 = withFormik({
       setSubmitting(false);
       resetForm();
       setStatus('positive');
+      props.history.push('/');
     }, 1000);
   },
 
